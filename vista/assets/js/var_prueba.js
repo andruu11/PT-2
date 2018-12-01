@@ -13,3 +13,11 @@ $('#Modal_Editar_Prueba').on('show.bs.modal', function (event) {
 		 
 		   $('.alert').hide();//Oculto alert
 		})
+
+$('#Modal_Eliminar_Prueba').on('show.bs.modal', function (event) {
+		  var button = $(event.relatedTarget) // Botón que activó el modal
+	      var id_documento = button.data('id_documento')
+          var modal = $(this)
+		  modal.find('.modal-body #id_documento').val(id_documento)
+          $('.alert').hide();//Oculto alert
+		})
