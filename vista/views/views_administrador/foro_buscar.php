@@ -7,7 +7,21 @@ require_once("../../default/default_administrador/sidebar_administrador.php");
 require_once("../../../modelo/model_admin/consultas.php"); 
 ?>
 
+<?php
+if (isset($_POST["buscar"])) {
+  $prueba = $objData->prepare("SELECT * FROM `documento` INNER JOIN tipo_documento ON documento.id_tipo_documento = tipo_documento.id_tipo_documento INNER JOIN usuario ON usuario.id_usuario = documento.id_usuario WHERE documento.id_categoria = :id_categoria");
+  $prueba->bindParam(':id_categoria', $_POST["ids"]);
+  $prueba->execute();
+  $resultado_prueba = $prueba->fetchAll();
+}elseif (isset($_GET["variable"])) {
+  $prueba = $objData->prepare("SELECT * FROM `documento` INNER JOIN tipo_documento ON documento.id_tipo_documento = tipo_documento.id_tipo_documento INNER JOIN usuario ON usuario.id_usuario = documento.id_usuario WHERE documento.id_categoria = :id_categoria");
+  $prueba->bindParam(':id_categoria', $_GET["variable"]);
+  $prueba->execute();
+  $resultado_prueba = $prueba->fetchAll();
+} 
 
+
+?>
 
 
                 <!--==================================================================================-->
@@ -20,7 +34,7 @@ require_once("../../../modelo/model_admin/consultas.php");
 <div class="container">
   <div class="row">
     <div class="col-md-4">
-      <form action="#">
+      <form action="foro_buscar.php">
         <input type="text" id="buscar" name="buscar">
         <input type="hidden" id="ids" name="ids" value="<?php echo $_GET["variable"]; ?>">
         <input type="submit" value="Registrar" class="btn btn-info" style="color:#FAFAFA" />
@@ -29,7 +43,7 @@ require_once("../../../modelo/model_admin/consultas.php");
 
 
   $prueba = $objData->prepare("SELECT * FROM `documento` INNER JOIN tipo_documento ON documento.id_tipo_documento = tipo_documento.id_tipo_documento INNER JOIN usuario ON usuario.id_usuario = documento.id_usuario WHERE documento.id_categoria = :id_categoria");
-  $prueba->bindParam(':id_categoria', $cat);
+  $prueba->bindParam(':id_categoria', $_GET["variable"]);
   $prueba->execute();
   $resultado_prueba = $prueba->fetchAll();
 ?>
@@ -38,8 +52,9 @@ require_once("../../../modelo/model_admin/consultas.php");
     <div class="col-md-4"></div>
     <div class="col-md-4"> <button type="button" class="btn btn-success pull-right menu" data-toggle="modal" data-target="#Modal_Nuevo_Documento"><i class="glyphicon glyphicon-plus" aria-hidden="true"></i>&nbsp;Nuevo Documento</button> 
 <?php require_once('modals_admin/modal_nuevo_documento.php');
+require_once('modals_admin/modal_editar_documento.php');
+require_once('modals_admin/modal_eliminar_documento.php');
   ?> 
-  <?php require_once('modals_admin/madal_editar_documento.php');?>
     </div>
   </div>
   <div class="row cont-cajas">
@@ -82,6 +97,7 @@ if($extension == 'pdf'){ ?>
     </ul>
   <div class="card-body">
     <button type="button" class="btn btn-block btn-warning" data-toggle="modal" title="Editar" data-target="#Modal_Editar_Prueba" data-id_documento="<?php echo ($valor_prueba['id_documento']) ?>" data-nombre_documento="<?php echo utf8_encode($valor_prueba['nombre_documento']) ?>" data-id_categoria="<?php echo utf8_encode($valor_prueba['id_categoria']) ?>" data-id_tipo_documento="<?php echo ($valor_prueba['id_tipo_documento']) ?>" style="color: #FAFAFA" >Editar</button>
+    <button type="button" class="btn btn-block btn-danger" data-toggle="modal" title="Editar" data-target="#Modal_Eliminar_Prueba" data-id_documento="<?php echo ($valor_prueba['id_documento']) ?>" style="color: #FAFAFA" >Eliminar</button>
   </div>
 </div>
 <?php }?>

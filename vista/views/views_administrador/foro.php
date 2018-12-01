@@ -6,12 +6,27 @@ require_once("../../default/default_administrador/header_administrador.php");
 require_once("../../default/default_administrador/sidebar_administrador.php");
 require_once("../../../modelo/model_admin/consultas.php"); 
 ?>
-<?php
- 
-  $cat = $_GET["variable"];
- 
-?>
 
+<?php
+if (isset($_POST["buscar"])) {
+  $boton = $_POST['ids'];
+  $bus = '%'.$_POST["buscar"].'%';
+  $prueba = $objData->prepare("SELECT * FROM `documento` INNER JOIN tipo_documento ON documento.id_tipo_documento = tipo_documento.id_tipo_documento INNER JOIN usuario ON usuario.id_usuario = documento.id_usuario WHERE documento.id_categoria = :id_categoria AND documento.nombre_documento LIKE :bus");
+  $prueba->bindParam(':id_categoria', $_POST["ids"]);
+  $prueba->bindParam(":bus", $bus, PDO::PARAM_STR);
+ 
+  $prueba->execute();
+  $resultado_prueba = $prueba->fetchAll();
+}elseif (isset($_GET["variable"])) {
+  $boton = $_GET['variable'];
+  $prueba = $objData->prepare("SELECT * FROM `documento` INNER JOIN tipo_documento ON documento.id_tipo_documento = tipo_documento.id_tipo_documento INNER JOIN usuario ON usuario.id_usuario = documento.id_usuario WHERE documento.id_categoria = :id_categoria");
+  $prueba->bindParam(':id_categoria', $_GET["variable"]);
+  $prueba->execute();
+  $resultado_prueba = $prueba->fetchAll();
+} 
+
+
+?>
 
 
                 <!--==================================================================================-->
@@ -24,22 +39,15 @@ require_once("../../../modelo/model_admin/consultas.php");
 <div class="container">
   <div class="row">
     <div class="col-md-4">
-      <form action="#">
+      <form action="foro.php" method="POST">
         <input type="text" id="buscar" name="buscar">
         <input type="hidden" id="ids" name="ids" value="<?php echo $_GET["variable"]; ?>">
-        <input type="submit" value="Registrar" class="btn btn-info" style="color:#FAFAFA" />
+        <input type="submit" value="Buscar" class="btn btn-info" style="color:#FAFAFA" />
       </form>
-<?php
-
-
-  $prueba = $objData->prepare("SELECT * FROM `documento` INNER JOIN tipo_documento ON documento.id_tipo_documento = tipo_documento.id_tipo_documento INNER JOIN usuario ON usuario.id_usuario = documento.id_usuario WHERE documento.id_categoria = :id_categoria");
-  $prueba->bindParam(':id_categoria', $cat);
-  $prueba->execute();
-  $resultado_prueba = $prueba->fetchAll();
-?>
+      
 
     </div>
-    <div class="col-md-4"></div>
+    <div class="col-md-4"><a href="foro.php?variable=<?php echo $boton?>"" class="btn btn-info"  style="color:#FAFAFA" >Mostrar Todos</a></div>
     <div class="col-md-4"> <button type="button" class="btn btn-success pull-right menu" data-toggle="modal" data-target="#Modal_Nuevo_Documento"><i class="glyphicon glyphicon-plus" aria-hidden="true"></i>&nbsp;Nuevo Documento</button> 
 <?php require_once('modals_admin/modal_nuevo_documento.php');
 require_once('modals_admin/modal_editar_documento.php');
